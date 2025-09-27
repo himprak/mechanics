@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Visualizer</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 200px;
+            background-color: #333;
+            color: white;
+            padding: 20px;
+        }
+        .sidebar h2 {
+            margin-top: 0;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar li {
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .sidebar li:hover, .sidebar li.active {
+            background-color: #575757;
+        }
+        .content {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        main {
+            border: 2px solid #ccc;
+        }
+    </style>
+    <!-- Load Matter.js and p5.js libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+    <!-- Load your sketch file -->
+    <script src="sketch.js"></script>
+</head>
+<body>
+    <nav class="sidebar">
+        <h2>Visualizations</h2>
+        <ul>
+            <!-- These IDs will be used by JavaScript to switch scenes -->
+            <li id="select-circle" class="active">Moving Circle</li>
+            <li id="select-wedge">Box on Wedge</li>
+        </ul>
+    </nav>
+    <div class="content">
+        <main id="main"></main>
+    </div>
+</body>
+</html>
