@@ -24,17 +24,27 @@ function setup() {
     // --- Scene Selection Logic ---
     const selectCircleBtn = document.getElementById('select-circle');
     const selectWedgeBtn = document.getElementById('select-wedge');
+    const selectCircleWedgeBtn = document.getElementById('select-circle-wedge');
 
     selectCircleBtn.addEventListener('click', () => {
         switchScene('circle');
         selectCircleBtn.classList.add('active');
         selectWedgeBtn.classList.remove('active');
+        selectCircleWedgeBtn.classList.remove('active');
     });
 
     selectWedgeBtn.addEventListener('click', () => {
         switchScene('wedge');
         selectWedgeBtn.classList.add('active');
         selectCircleBtn.classList.remove('active');
+        selectCircleWedgeBtn.classList.remove('active');
+    });
+
+    selectCircleWedgeBtn.addEventListener('click', () => {
+        switchScene('circle-wedge');
+        selectCircleWedgeBtn.classList.add('active');
+        selectCircleBtn.classList.remove('active');
+        selectWedgeBtn.classList.remove('active');
     });
 
     // Start with the circle scene
@@ -55,6 +65,8 @@ function switchScene(sceneName) {
         setupCircleScene();
     } else if (sceneName === 'wedge') {
         setupWedgeScene();
+    } else if (sceneName === 'circle-wedge') {
+        setupCircleWedgeScene();
     }
 }
 
@@ -104,6 +116,35 @@ function setupWedgeScene() {
     World.add(world, [sceneObjects.ground, sceneObjects.wedge, sceneObjects.box]);
 }
 
+function setupCircleWedgeScene() {
+    world.gravity.y = 1; // Enable gravity for this scene
+
+    // Create a frictionless floor
+    sceneObjects.ground = Bodies.rectangle(width / 2, height - 20, width * 10, 40, { isStatic: true, friction: 0 });
+
+    // Create the wedge. For the circle to roll, the wedge surface needs friction.
+    const wedgeWidth = 300;
+    const wedgeHeight = 150;
+    const wedgeX = width / 2 - 100;
+    const wedgeY = height - 40 - wedgeHeight / 2;
+    const wedgeVertices = [
+        { x: -wedgeWidth / 2, y:  wedgeHeight / 2 },
+        { x:  wedgeWidth / 2, y:  wedgeHeight / 2 },
+        { x: -wedgeWidth / 2, y: -wedgeHeight / 2 }
+    ];
+    sceneObjects.wedge = Bodies.fromVertices(wedgeX, wedgeY, [wedgeVertices], { friction: 0, frictionStatic: 0, frictionAir: 0 });
+
+    // Create the circle
+    const circleRadius = 25;
+    const wedgeAngle = Math.atan2(wedgeHeight, wedgeWidth);
+    const circleX = wedgeX - wedgeWidth / 4;
+    const circleY = wedgeY - wedgeHeight / 4 - circleRadius;
+    // The circle also needs friction to be able to roll down the slope
+    sceneObjects.circle = Bodies.circle(circleX, circleY, circleRadius, { friction: 0, frictionStatic: 0, frictionAir: 0 });
+
+    World.add(world, [sceneObjects.ground, sceneObjects.wedge, sceneObjects.circle]);
+}
+
 function draw() {
     background(51);
     Engine.update(engine);
@@ -115,6 +156,8 @@ function draw() {
         drawCircleScene();
     } else if (currentScene === 'wedge') {
         drawWedgeScene();
+    } else if (currentScene === 'circle-wedge') {
+        drawCircleWedgeScene();
     }
 }
 
@@ -135,6 +178,18 @@ function drawWedgeScene() {
 
     fill(0, 150, 255);
     drawVertices(sceneObjects.box.vertices);
+}
+
+function drawCircleWedgeScene() {
+    fill(128);
+    drawVertices(sceneObjects.ground.vertices);
+
+    fill(200, 200, 0);
+    drawVertices(sceneObjects.wedge.vertices);
+
+    // Use a different color for this circle
+    fill(255, 100, 100);
+    drawVertices(sceneObjects.circle.vertices);
 }
 
 // Helper function to draw a shape from a list of vertices.
